@@ -42,6 +42,13 @@ class VisualizerClient:
             'text': text,
         })
 
+    def draw_line(self, x1, y1, x2, y2):
+        self.buffer.append({
+            'cmd': 'drawLine',
+            'x1': x1, 'y1': y1,
+            'x2': x2, 'y2': y2,
+        })
+
 
 
 

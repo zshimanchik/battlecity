@@ -1,3 +1,4 @@
+import math
 import random
 import sys
 from threading import Thread
@@ -24,7 +25,7 @@ class MainWindow(QWidget):
         self.data = []
 
     def initUI(self):
-        self.setGeometry(300, 300, 300, 220)
+        self.setGeometry(300, 300, 600, 400)
         self.setWindowTitle('Main window')
         # self.setWindowIcon(QIcon('web.png'))
 
@@ -91,13 +92,14 @@ class MainWindow(QWidget):
 
     def drawLine(self, painter, item):
         painter.setPen(QPen(QColor(*item.get('color', self.BLACK))))
-        painter.drawLine(item['col1'] * self.cell_width + self.cell_half_width,
-                         item['row1'] * self.cell_height + self.cell_half_height,
-                         item['col2'] * self.cell_width + self.cell_half_width,
-                         item['row2'] * self.cell_height + self.cell_half_height)
+        painter.drawLine(item['x1'] * self.cell_width + self.cell_half_width,
+                         item['y1'] * self.cell_height + self.cell_half_height,
+                         item['x2'] * self.cell_width + self.cell_half_width,
+                         item['y2'] * self.cell_height + self.cell_half_height)
 
     def drawBoard(self, painter, item):
         self.board = item['board']
+        self.n = int(math.sqrt(len(self.board)))
 
         painter.setPen(QPen(QColor(0, 0, 0)))
         painter.setBrush(QBrush(QColor(0, random.randint(0, 255), 255, 15)))

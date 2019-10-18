@@ -2,7 +2,9 @@ import logging
 from collections import deque
 
 from models import Board
-from tactics import RandomTactics, SeeAndShoot, Hunt
+from tactics.hunt import Hunt
+from tactics.random import RandomTactics
+from tactics.see_and_shoot import SeeAndShoot
 
 logger = logging.getLogger(__name__)
 
@@ -23,11 +25,16 @@ class Player:
         self.fire_countdown = 0
 
     def turn(self, board):
-        result = self._turn(board)
-        self.result = result
-        print(f'result: {result}')
-        self.visualizer.print(f'result: {result}')
-        self.visualizer.update(self)
+        try:
+            result = self._turn(board)
+            self.result = result
+            print(f'result: {result}')
+            self.visualizer.print(f'result: {result}')
+            self.visualizer.update(self)
+        except Exception as ex:
+            print('There is an exception')
+            logger.exception('There is some exception', exc_info=ex)
+            result = ''
         return result
 
     def _turn(self, board):
@@ -53,6 +60,7 @@ class Player:
         if 'act' in action:
             self.fire_countdown = self.FIRE_COUNTDOWN
         assert isinstance(action, str)
+        # return 'right,act'
         return action
 
     def tick(self):

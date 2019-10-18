@@ -30,7 +30,7 @@ class Direction(Enum):
         return self_to_vec[self]
 
 
-@dataclass
+@dataclass(frozen=True)
 class Point:
     x: int
     y: int
@@ -46,6 +46,13 @@ class Point:
             return Point(self.x - other.x, self.y - other.y)
         else:
             raise ValueError()
+
+    def length(self):
+        return math.hypot(self.x, self.y)
+
+    def get_neighbours(self):
+        for dir in Direction:
+            yield self + dir.get_delta()
 
     def give_direction(self):
         if self.x == 0 and self.y < 0:

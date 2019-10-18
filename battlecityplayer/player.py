@@ -2,7 +2,7 @@ import logging
 from collections import deque
 
 from models import Board
-from tactics import RandomTactics, SeeAndShoot
+from tactics import RandomTactics, SeeAndShoot, Hunt
 
 logger = logging.getLogger(__name__)
 
@@ -11,6 +11,7 @@ class Player:
     tactics = [
         RandomTactics(),
         SeeAndShoot(),
+        Hunt(),
     ]
 
     FIRE_COUNTDOWN = 4

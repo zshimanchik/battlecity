@@ -22,18 +22,47 @@ class Direction(Enum):
 
     def get_delta(self):
         self_to_vec = {
-            Direction.UP: [0, -1],
-            Direction.RIGHT:[1, 0],
-            Direction.DOWN:[0, 1],
-            Direction.LEFT:[-1, 0],
+            Direction.UP: Point(0, -1),
+            Direction.RIGHT: Point(1, 0),
+            Direction.DOWN: Point(0, 1),
+            Direction.LEFT: Point(-1, 0),
         }
         return self_to_vec[self]
 
 
 @dataclass
-class Vec:
+class Point:
     x: int
     y: int
+
+    def __add__(self, other):
+        if isinstance(other, Point):
+            return Point(self.x + other.x, self.y + other.y)
+        else:
+            raise ValueError()
+
+    def __sub__(self, other):
+        if isinstance(other, Point):
+            return Point(self.x - other.x, self.y - other.y)
+        else:
+            raise ValueError()
+
+    def give_direction(self):
+        if self.x == 0 and self.y < 0:
+            return Direction.UP
+        elif self.x == 0 and self.y > 0:
+            return Direction.DOWN
+        elif self.y == 0 and self.x > 0:
+            return Direction.RIGHT
+        elif self.y == 0 and self.x < 0:
+            return Direction.LEFT
+        else:
+            raise ValueError()
+
+
+@dataclass
+class Vec:
+    pos: Point
     dir: Direction
 
 
@@ -47,20 +76,19 @@ class Board:
             for y in range(self.n):
                 ch = self.char(x, y)
                 if ch in SELF_TANKS:
-                    self.me = Vec(x, y, Direction.get_by_self_tank(ch))
+                    self.me = Vec(Point(x, y), Direction.get_by_self_tank(ch))
 
     def char(self, x, y):
         return self.text[y * self.n + x]
 
     def get_view(self, vec, till_the_wall=False):
-        x, y = vec.x, vec.y
-        delta_x, delta_y = vec.dir.get_delta()
+        cur_pos = vec.pos
+        delta = vec.dir.get_delta()
         res = ''
-        while 0 <= x < self.n and 0 <= y < self.n:
-            ch = self.char(x, y)
+        while 0 <= cur_pos.x < self.n and 0 <= cur_pos.y < self.n:
+            ch = self.char(cur_pos.x, cur_pos.y)
             res += ch
-            x += delta_x
-            y += delta_y
+            cur_pos += delta
             if till_the_wall and ch in BARRIERS:
                 break
         return res

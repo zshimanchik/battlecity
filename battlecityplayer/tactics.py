@@ -56,7 +56,7 @@ class Hunt(Tactics):
         self.action = ''
         board = player.board
         path = self.find_path_to_enemy(board)
-        if len(path) > 3:
+        if path and len(path) > 3:
             print(path)
             delta = path[1] - player.board.me.pos
             print('delta: ', delta)

@@ -15,12 +15,21 @@ class Player:
 
     FIRE_COUNTDOWN = 4
 
-    def __init__(self):
+    def __init__(self, visualizer):
         self.board = None
+        self.visualizer = visualizer
         self.history = deque(maxlen=3)
         self.fire_countdown = 0
 
     def turn(self, board):
+        result = self._turn(board)
+        self.result = result
+        print(f'result: {result}')
+        self.visualizer.print(f'result: {result}')
+        self.visualizer.update(self)
+        return result
+
+    def _turn(self, board):
         self.board = Board(board)
         self.history.appendleft(board)
         self.tick()

@@ -1,0 +1,3 @@
+websocket-client
+click
+ws4py

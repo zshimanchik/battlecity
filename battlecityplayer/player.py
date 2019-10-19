@@ -53,6 +53,7 @@ class Player:
             print(self.board.text[self.board.n*row:self.board.n*(row+1)])
 
         if self.board.me is None:
+            self.reset()
             print("Dead. Do nothing")
             return ''
 
@@ -71,6 +72,9 @@ class Player:
         assert isinstance(action, str)
         # return 'right,act'
         return action
+
+    def reset(self):
+        self.fire_countdown = 0
 
     def tick(self):
         if self.fire_countdown > 0:

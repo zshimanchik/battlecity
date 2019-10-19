@@ -1,12 +1,20 @@
+import threading
 
-from flask import Flask, request, jsonify
+from flask import Flask, request
+from werkzeug.serving import make_server
 
-class Receiver:
+
+class Receiver(threading.Thread):
 
     def __init__(self, window):
+        threading.Thread.__init__(self)
         self.window = window
         self.flask_app = Flask(__name__)
         self.main_route = self.flask_app.route('/', methods=['POST'])(self.main_route)
+
+        self.srv = make_server('127.0.0.1', 5000, self.flask_app)
+        self.ctx = self.flask_app.app_context()
+        self.ctx.push()
 
     def main_route(self):
         print(request.data.decode('utf8'))
@@ -14,4 +22,8 @@ class Receiver:
         return "ok"
 
     def run(self):
-        return self.flask_app.run()
+        print('starting server')
+        self.srv.serve_forever()
+
+    def shutdown(self):
+        self.srv.shutdown()

@@ -40,11 +40,12 @@ class VisualizerClient:
             'text': text,
         })
 
-    def draw_line(self, x1, y1, x2, y2):
+    def draw_line(self, x1, y1, x2, y2, color=None):
         self.buffer.append({
             'cmd': 'drawLine',
             'x1': x1, 'y1': y1,
             'x2': x2, 'y2': y2,
+            'color': [0,0,0] if color is None else color,
         })
 
     def draw_rect(self, x, y):

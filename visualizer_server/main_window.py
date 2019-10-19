@@ -11,6 +11,7 @@ from PyQt5.QtCore import QTimer, pyqtSlot as Slot, QRect, Qt, QPointF, QDir
 class MainWindow(QWidget):
     TIMER_INTERVAL = 500
     RIGHT_OFFSET = 200
+    HISTORY_SIZE = 500
 
     BLACK = (0, 0, 0)
 
@@ -21,7 +22,7 @@ class MainWindow(QWidget):
         self.board = '*'* 34 * 34
         self.n = 34
         self.data = []
-        self.history = deque(maxlen=50)
+        self.history = deque(maxlen=self.HISTORY_SIZE)
         self.freeze = False
         self.freeze_index = 0
 

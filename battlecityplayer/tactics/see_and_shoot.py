@@ -26,6 +26,8 @@ class SeeAndShoot(Tactics):
 
         danger, dist, dir = min(enemies_with_3d, key=lambda x: (x[0], x[1]))
         self.action = 'act,' + dir.value
+        # if danger > 1:
+        #     self.usability = 0.001
         if dist < 6:
             self.usability = 0.9
         else:

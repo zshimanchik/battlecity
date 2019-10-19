@@ -1,3 +1,5 @@
+import random
+
 from models import Direction, Vec
 from tactics import Tactics
 from constants import *
@@ -16,7 +18,11 @@ class DodgeBullet(Tactics):
                 potenial_poss.append(neighbour)
 
         self.visualize(player, potenial_poss)
-
+        # potential_poss_with_danger = [(p, player._estimate_pos(p)) for p in potenial_poss]
+        # filtered_potenial_poss = [pos for pos, danger in potential_poss_with_danger if danger <= 1]
+        # min_danger = min(danger for pos, danger in potential_poss_with_danger)
+        # filtered_potenial_poss = [pos for pos, danger in potential_poss_with_danger if danger == min_danger]
+        # chosen_pos = random.choice(filtered_potenial_poss)
         chosen_pos = min(potenial_poss, key=lambda pos: player._estimate_pos(pos))
         if chosen_pos == board.me.pos:
             self.action = ''

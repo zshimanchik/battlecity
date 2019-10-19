@@ -30,6 +30,7 @@ class Player:
         self.visualizer = visualizer
         self.history = deque(maxlen=3)
         self.fire_countdown = 0
+        self.result = ''
 
     def turn(self, board):
         try:

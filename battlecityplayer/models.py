@@ -55,6 +55,13 @@ class Point:
         else:
             raise ValueError()
 
+    def __mul__(self, other):
+        if isinstance(other, int):
+            return Point(self.x * other, self.y * other)
+        else:
+            raise ValueError()
+
+
     def length(self):
         return math.hypot(self.x, self.y)
 

@@ -2,7 +2,7 @@ import logging
 import math
 from collections import deque
 
-from models import Board, Direction, Vec
+from models import Board, Direction, Vec, Point
 from tactics.astarhunt import AStarHunt
 from tactics.dodge import DodgeBullet
 from tactics.hunt import Hunt
@@ -101,11 +101,18 @@ class Player:
             view = self.board.get_view(Vec(pos, dir))
             for dist, ch in enumerate(view):
                 if ch == BULLET and dist <= 2:
-                    danger += 1
+                    if ((dist == 0 and self.is_my_bullet(pos))  # my bullet in front of me
+                            or (dist == 2 and self.is_my_bullet(pos + dir.get_delta() * dist))):  # my bullet from the back
+                        pass
+                    else:
+                        danger += 1
                 if ch in ENEMIES and dist <= 2:
                     danger += 1
         return danger
 
+    def is_my_bullet(self, pos):
+        # prev result is fire and it's next cell in my direction
+        return 'act' in self.result and pos == self.board.me.pos + self.board.me.dir.get_delta()
 
     def save_history(self, board):
         if self.SAVE_HISTORY:

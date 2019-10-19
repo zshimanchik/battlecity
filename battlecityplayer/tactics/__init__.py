@@ -13,9 +13,3 @@ class Tactics:
     def update(self, player):
         pass
 
-
-
-class DodgeBullet(Tactics):
-    def update(self, player):
-        self.action = ''
-        self.usability = 0

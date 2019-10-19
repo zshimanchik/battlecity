@@ -88,7 +88,7 @@ class Board:
     def char(self, x, y):
         return self.text[y * self.n + x]
 
-    def get_view(self, vec, till_the_wall=False):
+    def get_view(self, vec, till_the_wall=True):
         cur_pos = vec.pos
         delta = vec.dir.get_delta()
         res = ''
@@ -100,4 +100,11 @@ class Board:
                 break
         return res
 
+    def is_belong(self, point):
+        return 0 <= point.x < self.n and 0 <= point.y < self.n
 
+    def get_all_enemies(self):
+        for x in range(self.n):
+            for y in range(self.n):
+                if self.char(x, y) in ENEMIES:
+                    yield Point(x, y)

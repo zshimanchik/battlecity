@@ -17,7 +17,7 @@ class Hunt(Tactics):
             print('delta: ', delta)
             print('dir: ', delta.give_direction())
             self.action = delta.give_direction().value
-            self.usability = 0.7
+            self.usability = 0.5
 
     def find_path_to_enemy(self, board):
         dist_mtrx = [[0] * board.n for _ in range(board.n)]  # 0 - means unvisited

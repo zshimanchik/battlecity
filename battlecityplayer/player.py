@@ -2,8 +2,10 @@ import logging
 from collections import deque
 
 from models import Board
+from tactics.astar import AStar
+from tactics.dodge import DodgeBullet
 from tactics.hunt import Hunt
-from tactics.random import RandomTactics
+from tactics.random_tct import RandomTactics
 from tactics.see_and_shoot import SeeAndShoot
 
 logger = logging.getLogger(__name__)
@@ -11,9 +13,11 @@ logger = logging.getLogger(__name__)
 
 class Player:
     tactics = [
+        AStar(),
         RandomTactics(),
         SeeAndShoot(),
         Hunt(),
+        DodgeBullet(),
     ]
 
     FIRE_COUNTDOWN = 4

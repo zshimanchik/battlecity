@@ -27,4 +27,4 @@ class SeeAndShoot(Tactics):
         if enemy_dist < 6:
             self.usability = 0.9
         else:
-            self.usability = 0.7
+            self.usability = 0.8

@@ -28,7 +28,12 @@ class AStarHunt(Tactics):
             self.action = delta.give_direction().value
             if ch in CONSTRUCTIONS or ch in ENEMIES:
                 self.action += ',act'
-            self.usability = 0.5
+
+            danger = player._estimate_pos(path[1])
+            if danger >= 1:
+                self.usability = 0
+            else:
+                self.usability = 0.5
 
     def _draw_path(self, path, visualizer):
         if len(path) > 1:

@@ -7,9 +7,7 @@ class DodgeBullet(Tactics):
     def update(self, player):
         self.action = ''
         self.usability = 0
-        if player.fire_countdown == 0:
-            return
-        self.usability = 0.2
+
         board = player.board
         potenial_poss = [player.board.me.pos]
         for dir in Direction:
@@ -17,17 +15,9 @@ class DodgeBullet(Tactics):
             if board.is_belong(neighbour) and board.char(neighbour.x, neighbour.y) not in BARRIERS:
                 potenial_poss.append(neighbour)
 
-        potenial_poss_with_danger = [(pos, self._analyze_pos(board, pos)) for pos in potenial_poss]
-        for pos, danger in potenial_poss_with_danger:
-            player.visualizer.client.set_pen(int((danger / 3) * 255), 0, 0)
-            player.visualizer.client.draw_rect(pos.x, pos.y)
-            if pos == player.board.me.pos:
-                dir = 'STAY'
-            else:
-                dir = (pos - player.board.me.pos).give_direction().value
-            player.visualizer.print(f"{dir} danger={danger}")
+        self.visualize(player, potenial_poss)
 
-        chosen_pos = min(potenial_poss, key=lambda pos: self._analyze_pos(board, pos))
+        chosen_pos = min(potenial_poss, key=lambda pos: player._estimate_pos(pos))
         if chosen_pos == board.me.pos:
             self.action = ''
         else:
@@ -35,13 +25,18 @@ class DodgeBullet(Tactics):
             print('delta:', delta)
             self.action = delta.give_direction().value
 
-    def _analyze_pos(self, board, pos):
-        danger = 0
-        for dir in Direction:
-            view = board.get_view(Vec(pos, dir))
-            for dist, ch in enumerate(view):
-                if ch == BULLET and dist <= 3:
-                    danger += 1
-                if ch in OTHER_TANKS and dist <= 3:
-                    danger += 1
-        return danger
+        if player.fire_countdown == 0:
+            self.usability = 0.001
+        else:
+            self.usability = 0.2
+
+    def visualize(self, player, potenial_poss):
+        potenial_poss_with_danger = [(pos, player._estimate_pos(pos)) for pos in potenial_poss]
+        for pos, danger in potenial_poss_with_danger:
+            player.visualizer.client.set_pen(int((danger / 2) * 255), 0, 0)
+            player.visualizer.client.draw_rect(pos.x, pos.y)
+            if pos == player.board.me.pos:
+                dir = 'STAY'
+            else:
+                dir = (pos - player.board.me.pos).give_direction().value
+            player.visualizer.print(f"{dir} danger={danger}")

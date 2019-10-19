@@ -2,12 +2,13 @@ import logging
 import math
 from collections import deque
 
-from models import Board
+from models import Board, Direction, Vec
 from tactics.astarhunt import AStarHunt
 from tactics.dodge import DodgeBullet
 from tactics.hunt import Hunt
 from tactics.random_tct import RandomTactics
 from tactics.see_and_shoot import SeeAndShoot
+from constants import *
 
 logger = logging.getLogger(__name__)
 
@@ -61,9 +62,14 @@ class Player:
         for tactic in self.tactics:
             tactic.update(self)
 
-        tactics = '\n'.join('{t.__class__.__name__} {t.usability:.2f} {t.action}'.format(t=t) for t in self.tactics)
-        self.visualizer.print(tactics)
-        # print('\n'.join('{t.usability:.3f} {t.action} {t.__class__.__name__}'.format(t=t) for t in self.tactics))
+
+        possible_actions = [tactic.action for tactic in self.tactics]
+        action_dangerous = [self._estimate_action(action) for action in possible_actions]
+        self.visualizer.print(
+            '\n'.join('{t.__class__.__name__:<14} {t.usability:.2f} {t.action} {d}'.format(t=t,d=d)
+                      for t,d in zip(self.tactics, action_dangerous)))
+
+
 
         current_tactics = max(self.tactics, key=lambda t: t.usability)
         action = current_tactics.action
@@ -79,6 +85,27 @@ class Player:
     def tick(self):
         if self.fire_countdown > 0:
             self.fire_countdown -= 1
+
+    def _estimate_action(self, action):
+        action = action.replace('act', '').replace(',', '')
+        if action == '':
+            pos = self.board.me.pos
+        else:
+            dir = Direction(action)
+            pos = self.board.me.pos + dir.get_delta()
+        return self._estimate_pos(pos)
+
+    def _estimate_pos(self, pos):
+        danger = 0
+        for dir in Direction:
+            view = self.board.get_view(Vec(pos, dir))
+            for dist, ch in enumerate(view):
+                if ch == BULLET and dist <= 2:
+                    danger += 1
+                if ch in ENEMIES and dist <= 2:
+                    danger += 1
+        return danger
+
 
     def save_history(self, board):
         if self.SAVE_HISTORY:

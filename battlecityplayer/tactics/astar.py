@@ -13,7 +13,7 @@ class AStar(Tactics):
         board = player.board
         enemies = board.get_all_enemies()
 
-        path = self.find_path_to_enemy(board, Point(17, 32))
+        path = self.find_path_to_enemy(board, Point(17, 32), player)
         if path and len(path) > 1:
             print(path)
             delta = path[1] - player.board.me.pos
@@ -37,10 +37,11 @@ class AStar(Tactics):
     def h(self, start, target):
         return (target - start).length()
 
-    def find_path_to_enemy(self, board, target):
+    def find_path_to_enemy(self, board, target, player):
         INF = 999999
         actual_dist_mtrx = [[INF] * board.n for _ in range(board.n)]
         potential_dist_mtrx = [[INF] * board.n for _ in range(board.n)]
+        came_from_mtrx = [[None] * board.n for _ in range(board.n)]
         visited = set()
         queue = deque()
         queue.appendleft(board.me.pos)
@@ -48,11 +49,12 @@ class AStar(Tactics):
         potential_dist_mtrx[board.me.pos.x][board.me.pos.y] = self.h(board.me.pos, target)
 
         while queue:
-            cur_pos = min(queue, key=lambda cur: potential_dist_mtrx[cur.x][cur.y])
-            if cur_pos == target:
-                return self._restore_path(cur_pos, actual_dist_mtrx)
+            cur_pos = queue.pop()
+            # cur_pos = min(queue, key=lambda cur: potential_dist_mtrx[cur.x][cur.y])
+            # if cur_pos == target:
+            #     return self._restore_path(cur_pos, actual_dist_mtrx)
 
-            queue.remove(cur_pos)
+            # queue.remove(cur_pos)
             visited.add(cur_pos)
 
             for dir in Direction:
@@ -66,8 +68,21 @@ class AStar(Tactics):
                     if dist_to_next < actual_dist_mtrx[next_pos.x][next_pos.y]:
                         actual_dist_mtrx[next_pos.x][next_pos.y] = dist_to_next
                         potential_dist_mtrx[next_pos.x][next_pos.y] = dist_to_next + self.h(next_pos, target)
+                        came_from_mtrx[next_pos.x][next_pos.y] = cur_pos
                         if next_pos not in queue:
-                            queue.append(next_pos)
+                            queue.appendleft(next_pos)
+        # self.draw(player.visualizer, actual_dist_mtrx, came_from_mtrx)
+        return self._restore_path(target, actual_dist_mtrx)
+
+    def draw(self, visualizer, actual_dist_mtrx, came_from_mtrx):
+        for x in range(len(actual_dist_mtrx)):
+            for y in range(len(actual_dist_mtrx[0])):
+                # visualizer.client.draw_text(x, y, str(actual_dist_mtrx[x][y]))
+                if came_from_mtrx[x][y] is not None:
+                    print(f"p={Point(x,y)} came_from={came_from_mtrx[x][y]} diff={Point(x, y) - came_from_mtrx[x][y]}")
+                    # print(f"{}")
+                    arrow = (came_from_mtrx[x][y] - Point(x, y)).get_direction().get_ascii_arrow()
+                    visualizer.client.draw_text(x, y, arrow)
 
     def _d(self, ch):
         if ch in CONSTRUCTIONS:

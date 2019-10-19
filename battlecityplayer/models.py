@@ -29,6 +29,14 @@ class Direction(Enum):
         }
         return self_to_vec[self]
 
+    def get_ascii_arrow(self):
+        return {
+            Direction.UP: '↑',
+            Direction.RIGHT: '→',
+            Direction.DOWN: '↓',
+            Direction.LEFT: '←',
+        }[self]
+
 
 @dataclass(frozen=True)
 class Point:
@@ -65,6 +73,9 @@ class Point:
             return Direction.LEFT
         else:
             raise ValueError()
+
+    get_direction = give_direction
+
 
 
 @dataclass

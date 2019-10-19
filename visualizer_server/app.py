@@ -45,8 +45,8 @@ class MainWindow(QWidget):
     def hpos(self, row, col):
         return self.cell_width * col, self.cell_height * row
 
-    def cell_rect(self, row, col):
-        return self.hpos(row, col) + (self.cell_width, self.cell_height)
+    def cell_rect(self, x, y):
+        return self.hpos(y, x) + (self.cell_width, self.cell_height)
 
     @property
     def cell_width(self):
@@ -107,6 +107,12 @@ class MainWindow(QWidget):
                          self.cell_width,
                          self.cell_height)
 
+    def drawText(self, painter, item):
+        painter.drawText(
+            QRect(*self.cell_rect(item['x'], item['y'])),
+            Qt.AlignCenter,
+            item['text']
+        )
 
     def drawBoard(self, painter, item):
         self.board = item['board']
@@ -123,7 +129,7 @@ class MainWindow(QWidget):
                 # print(self.cell_rect(row, col), ch)
                 # painter.drawEllipse(QRect(*self.cell_rect(row, col)))
                 painter.drawText(
-                    QRect(*self.cell_rect(row, col)),
+                    QRect(*self.cell_rect(col, row)),
                     Qt.AlignCenter,
                     ch
                 )

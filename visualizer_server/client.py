@@ -20,13 +20,11 @@ class VisualizerClient:
             'color': [r,g,b],
         })
 
-    def draw_text(self, x, y, width, height, text):
+    def draw_text(self, x, y, text):
         self.buffer.append({
             'cmd': 'drawText',
             'x': x,
             'y': y,
-            'width': width,
-            'height': height,
             'text': text
         })
 

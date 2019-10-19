@@ -1,4 +1,5 @@
 import logging
+import math
 from collections import deque
 
 from models import Board
@@ -21,6 +22,7 @@ class Player:
     ]
 
     FIRE_COUNTDOWN = 4
+    SAVE_HISTORY = True
 
     def __init__(self, visualizer):
         self.board = None
@@ -30,6 +32,7 @@ class Player:
 
     def turn(self, board):
         try:
+            self.save_history(board)
             result = self._turn(board)
             self.result = result
             print(f'result: {result}')
@@ -53,7 +56,7 @@ class Player:
             print("Dead. Do nothing")
             return ''
 
-        print(f'fc={self.fire_countdown}')
+        self.visualizer.print(f'fc={self.fire_countdown}')
         for tactic in self.tactics:
             tactic.update(self)
 
@@ -72,4 +75,13 @@ class Player:
     def tick(self):
         if self.fire_countdown > 0:
             self.fire_countdown -= 1
+
+    def save_history(self, board):
+        if self.SAVE_HISTORY:
+            with open('history.txt', 'a') as file:
+                n = int(math.sqrt(len(board)))
+                for i in range(n):
+                    file.write(board[i * n:(i + 1) * n] + '\n')
+                file.write('\n')
+
 

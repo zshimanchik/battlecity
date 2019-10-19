@@ -19,7 +19,7 @@ class DodgeBullet(Tactics):
 
         potenial_poss_with_danger = [(pos, self._analyze_pos(board, pos)) for pos in potenial_poss]
         for pos, danger in potenial_poss_with_danger:
-            player.visualizer.client.set_pen(int((danger / 1) * 255), 0, 0)
+            player.visualizer.client.set_pen(int((danger / 3) * 255), 0, 0)
             player.visualizer.client.draw_rect(pos.x, pos.y)
             if pos == player.board.me.pos:
                 dir = 'STAY'

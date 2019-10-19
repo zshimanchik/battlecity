@@ -18,7 +18,7 @@ class Receiver(threading.Thread):
 
     def main_route(self):
         print(request.data.decode('utf8'))
-        self.window.data = request.get_json(silent=True)
+        self.window.update(request.get_json(silent=True))
         return "ok"
 
     def run(self):

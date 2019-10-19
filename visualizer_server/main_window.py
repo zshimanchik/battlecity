@@ -1,8 +1,9 @@
 import math
 import random
+from collections import deque
 
 from PyQt5.QtWidgets import QApplication, QWidget
-from PyQt5.QtGui import QPainter, QBrush, QPen, QColor
+from PyQt5.QtGui import QPainter, QBrush, QPen, QColor, QFont
 from PyQt5.QtCore import QTimer, pyqtSlot as Slot, QRect, Qt, QPointF, QDir
 
 
@@ -20,21 +21,53 @@ class MainWindow(QWidget):
         self.board = '*'* 34 * 34
         self.n = 34
         self.data = []
+        self.history = deque(maxlen=50)
+        self.freeze = False
+        self.freeze_index = 0
 
     def initUI(self):
         self.setGeometry(300, 300, 600, 400)
         self.setWindowTitle('Main window')
         # self.setWindowIcon(QIcon('web.png'))
-
+        self.font = QFont()
+        self.font.setFamily("Sans Mono")
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.on_timer_timeout)
         self.timer.start(self.TIMER_INTERVAL)
 
         self.show()
 
+    def update(self, data):
+        if not self.freeze:
+            self.data = data
+            self.history.append(data)
+            self.freeze_index = len(self.history) - 1
+
     @Slot()
     def on_timer_timeout(self):
         self.repaint()
+
+
+    def keyPressEvent(self, event):
+        print(event)
+        key = event.key()
+        if key == Qt.Key_Right:
+            self.freeze_index = min(max(0, self.freeze_index + 1), len(self.history)-1)
+            self.data = self.history[self.freeze_index]
+        elif key == Qt.Key_Left:
+            self.freeze_index = min(max(0, self.freeze_index - 1), len(self.history)-1)
+            self.data = self.history[self.freeze_index]
+        elif key == Qt.Key_Space:
+            self.freeze = not self.freeze
+            self.freeze_index = len(self.history) - 1
+            self.data = self.history[self.freeze_index]
+        elif key == Qt.Key_Return:
+            pass
+        else:
+            print('key pressed: %s' % key)
+        pass
+
+    # @Sls('key pressed: %i' % event)
 
     def hdata(self, row, col):
         return self.board[row * self.n + col]
@@ -62,8 +95,10 @@ class MainWindow(QWidget):
         return self.cell_height // 2
 
     def paintEvent(self, event):
+        self.setWindowTitle(f'freeze={self.freeze} i={self.freeze_index} last={len(self.history)-1}')
         painter = QPainter()
         painter.begin(self)
+        painter.setFont(self.font)
         print_buffer = []
         try:
             painter.setRenderHint(QPainter.Antialiasing)

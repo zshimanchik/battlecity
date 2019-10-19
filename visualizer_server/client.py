@@ -49,6 +49,13 @@ class VisualizerClient:
             'x2': x2, 'y2': y2,
         })
 
+    def draw_rect(self, x, y):
+        self.buffer.append({
+            'cmd': 'drawRect',
+            'x': x,
+            'y': y,
+        })
+
 
 
 

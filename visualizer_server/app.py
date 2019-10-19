@@ -90,12 +90,23 @@ class MainWindow(QWidget):
         finally:
             painter.end()
 
+    def setPen(self, painter, item):
+        color = [max(0, min(255, int(c))) for c in item['color']]
+        painter.setPen(QPen(QColor(*color)))
+
     def drawLine(self, painter, item):
         painter.setPen(QPen(QColor(*item.get('color', self.BLACK))))
         painter.drawLine(item['x1'] * self.cell_width + self.cell_half_width,
                          item['y1'] * self.cell_height + self.cell_half_height,
                          item['x2'] * self.cell_width + self.cell_half_width,
                          item['y2'] * self.cell_height + self.cell_half_height)
+
+    def drawRect(self, painter, item):
+        painter.drawRect(item['x'] * self.cell_width,
+                         item['y'] * self.cell_height,
+                         self.cell_width,
+                         self.cell_height)
+
 
     def drawBoard(self, painter, item):
         self.board = item['board']

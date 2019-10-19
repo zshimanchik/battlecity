@@ -2,7 +2,7 @@ import logging
 from collections import deque
 
 from models import Board
-from tactics.astar import AStar
+from tactics.astarhunt import AStarHunt
 from tactics.dodge import DodgeBullet
 from tactics.hunt import Hunt
 from tactics.random_tct import RandomTactics
@@ -13,10 +13,10 @@ logger = logging.getLogger(__name__)
 
 class Player:
     tactics = [
-        AStar(),
+        AStarHunt(),
         RandomTactics(),
         SeeAndShoot(),
-        Hunt(),
+        # Hunt(),
         DodgeBullet(),
     ]
 
@@ -57,7 +57,9 @@ class Player:
         for tactic in self.tactics:
             tactic.update(self)
 
-        print('\n'.join('{t.usability:.3f} {t.action} {t.__class__.__name__}'.format(t=t) for t in self.tactics))
+        tactics = '\n'.join('{t.__class__.__name__} {t.usability:.2f} {t.action}'.format(t=t) for t in self.tactics)
+        self.visualizer.print(tactics)
+        # print('\n'.join('{t.usability:.3f} {t.action} {t.__class__.__name__}'.format(t=t) for t in self.tactics))
 
         current_tactics = max(self.tactics, key=lambda t: t.usability)
         action = current_tactics.action

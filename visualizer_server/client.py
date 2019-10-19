@@ -35,6 +35,7 @@ class VisualizerClient:
         })
 
     def print(self, text):
+        print(text)
         self.buffer.append({
             'cmd': 'print',
             'text': text,
